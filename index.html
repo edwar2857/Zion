@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CineStream | Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #96BB54;
+      --bg-dark: #070817;
+      --bg-card: #121430;
+      --text-main: #ffffff;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-hover: rgba(255, 255, 255, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+    body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
+
+    /* Header Responsivo */
+    header {
+      position: sticky; top: 0; z-index: 1100;
+      background: rgba(7, 8, 23, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 10px 4%;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--glass);
+    }
+
+    .search-container { flex: 1; }
+    .buscador {
+      width: 100%; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px; border-radius: 50px; color: white; outline: none;
+      font-size: 16px;
+    }
+
+    /* Galería Grid: MÓVIL 3 COLUMNAS | PC 6 COLUMNAS */
+    .galeria {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 columnas móvil */
+      gap: 10px; padding: 15px 4%;
+    }
+
+    @media (min-width: 1024px) {
+      .galeria {
+        grid-template-columns: repeat(6, 1fr); /* 6 columnas PC */
+        gap: 20px; padding: 25px 5%;
+      }
+    }
+
+    .pelicula {
+      background: var(--bg-card); border-radius: 10px; overflow: hidden;
+      position: relative; transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+    .pelicula:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); }
+    .pelicula img.poster { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+    
+    .info { 
+      padding: 8px 5px; 
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      position: absolute; bottom: 0; width: 100%;
+    }
+    .info h4 { 
+      font-size: 0.75rem; color: #ffffff; text-align: center;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+    }
+
+    .fecha {
+      position: absolute; top: 6px; left: 6px;
+      background: var(--primary); color: #0b0c2a;
+      font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px;
+      z-index: 2;
+    }
+
+    .bandera {
+      position: absolute; top: 6px; right: 6px;
+      width: 16px; height: 16px;
+      border-radius: 50%; object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.3);
+      z-index: 2;
+    }
+
+    /* Menú Lateral Responsivo */
+    #menu {
+      position: fixed; top: 0; left: -100%; width: 85%; max-width: 300px; height: 100vh;
+      background: var(--bg-card); z-index: 2000; padding: 30px 20px;
+      transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto; border-right: 1px solid var(--glass);
+    }
+    #menu.active { left: 0; }
+    
+    .seccion-label {
+      font-size: 0.7rem; color: var(--primary); font-weight: 800;
+      text-transform: uppercase; margin: 25px 0 15px 5px; letter-spacing: 1.5px;
+    }
+
+    .grid-filtros { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .filtro {
+      padding: 12px; background: var(--glass); border: 1px solid transparent;
+      color: #ccc; cursor: pointer; border-radius: 8px; font-size: 0.82rem;
+      transition: 0.3s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .filtro.active { background: var(--primary); color: #0b0c2a; font-weight: 700; }
+    .filtro-full { grid-column: 1 / -1; }
+
+    /* Filtro Años Horizontal */
+    #filtroAnios { 
+      display: flex; gap: 10px; overflow-x: auto; 
+      padding: 15px 4%; scrollbar-width: none;
+    }
+    #filtroAnios::-webkit-scrollbar { display: none; }
+    #filtroAnios button {
+      padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+      background: var(--glass); color: white; white-space: nowrap; cursor: pointer;
+    }
+    #filtroAnios button.active { background: var(--primary); color: #0b0c2a; border-color: var(--primary); }
+
+    /* Paginación */
+    .pagination { padding: 40px 0; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .pagination-buttons { display: flex; gap: 15px; }
+    #anterior, #siguiente {
+      padding: 12px 25px; background: var(--primary); border: none; border-radius: 8px; 
+      font-weight: bold; color: #0b0c2a; cursor: pointer;
+    }
+    button:disabled { opacity: 0.1; cursor: not-allowed; }
+
+    #overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1500;
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div id="btnMenu" style="cursor:pointer">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+  </div>
+  <div class="search-container">
+    <input type="search" id="buscador" class="buscador" placeholder="Buscar título...">
+  </div>
+</header>
+
+<div id="overlay"></div>
+
+<nav id="menu">
+  <h2 style="color:var(--primary); font-weight: 800; margin-bottom: 20px;">CineStream</h2>
+  
+  <div class="seccion-label">Navegación</div>
+  <div class="grid-filtros">
+    <button class="filtro filtro-full active" data-genero="todos">Explorar Todo</button>
+    <button class="filtro" data-genero="peliculas">Películas</button>
+    <button class="filtro" data-genero="series">Series</button>
+    <button class="filtro filtro-full" data-genero="animes">Animes</button>
+  </div>
+
+  <div class="seccion-label">Todos los Géneros</div>
+  <div class="grid-filtros">
+    <button class="filtro" data-genero="accion">Acción</button>
+    <button class="filtro" data-genero="aventura">Aventura</button>
+    <button class="filtro" data-genero="ciencia ficcion">C. Ficción</button>
+    <button class="filtro" data-genero="crimen">Crimen</button>
+    <button class="filtro" data-genero="comedia">Comedia</button>
+    <button class="filtro" data-genero="drama">Drama</button>
+    <button class="filtro" data-genero="fantasia">Fantasía</button>
+    <button class="filtro" data-genero="misterio">Misterio</button>
+    <button class="filtro" data-genero="romance">Romance</button>
+    <button class="filtro" data-genero="suspenso">Suspenso</button>
+    <button class="filtro filtro-full" data-genero="terror">Terror</button>
+  </div>
+</nav>
+
+<div id="filtroAnios"></div>
+<main class="galeria" id="galeria"></main>
+
+<div class="pagination">
+  <div class="pagination-buttons">
+    <button id="anterior">Anterior</button>
+    <button id="siguiente">Siguiente</button>
+  </div>
+  <span id="indicadorPaginas">Página 1 de 1</span>
+</div>
+
+<script>
+  let peliculas = [];
+  let peliculasFiltradas = [];
+  let paginaActual = 1;
+
+  // AJUSTE: 8 filas x 3 col = 24 (Móvil) | 10 filas x 6 col = 60 (PC)
+  const porPagina = window.innerWidth >= 1024 ? 60 : 24; 
+
+  const galeria = document.getElementById('galeria');
+  const buscador = document.getElementById('buscador');
+  const menu = document.getElementById('menu');
+  const overlay = document.getElementById('overlay');
+  let generoActivo = "todos";
+  let anioActivo = "todos";
+
+  const normalizar = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  Promise.all([
+    fetch("peliculas.json").then(res => res.json()).catch(() => []),
+    fetch("animes.json").then(res => res.json()).catch(() => []),
+    fetch("series.json").then(res => res.json()).catch(() => [])
+  ])
+  .then(data => {
+    peliculas = data.flat();
+    peliculasFiltradas = [...peliculas];
+    generarBotonesAnios();
+    mostrarPeliculas();
+  });
+
+  function mostrarPeliculas() {
+    galeria.innerHTML = "";
+    const inicio = (paginaActual - 1) * porPagina;
+    const fin = inicio + porPagina;
+    const lista = peliculasFiltradas.slice(inicio, fin);
+
+    if (lista.length === 0) {
+      galeria.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:100px; opacity:0.5;'>Sin resultados</div>";
+    } else {
+      lista.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "pelicula";
+        div.innerHTML = `
+          <a href="${p.url}" style="text-decoration:none">
+            <div class="fecha">${p.fecha}</div>
+            <img class="bandera" src="banderas/${p.idioma}.png" onerror="this.style.display='none'">
+            <img class="poster" src="${p.imagen}" loading="lazy">
+            <div class="info"><h4>${p.titulo}</h4></div>
+          </a>
+        `;
+        galeria.appendChild(div);
+      });
+    }
+    actualizarPaginacion();
+  }
+
+  function filtrar() {
+    const texto = normalizar(buscador.value.trim());
+    peliculasFiltradas = peliculas.filter(p => {
+      const matchTexto = normalizar(p.titulo).includes(texto);
+      const matchAnio = anioActivo === "todos" || String(p.fecha) === String(anioActivo);
+      let matchGen = generoActivo === "todos";
+      if (!matchGen) {
+        const generos = Array.isArray(p.genero) ? p.genero.map(g => normalizar(g)) : [normalizar(p.genero)];
+        matchGen = generos.includes(generoActivo);
+      }
+      return matchTexto && matchAnio && matchGen;
+    });
+    paginaActual = 1;
+    mostrarPeliculas();
+  }
+
+  function actualizarPaginacion() {
+    const total = Math.ceil(peliculasFiltradas.length / porPagina) || 1;
+    document.getElementById('indicadorPaginas').textContent = `Página ${paginaActual} de ${total}`;
+    document.getElementById('anterior').disabled = paginaActual === 1;
+    document.getElementById('siguiente').disabled = paginaActual >= total;
+  }
+
+  document.getElementById('btnMenu').onclick = () => { menu.classList.add('active'); overlay.style.display = 'block'; };
+  overlay.onclick = () => { menu.classList.remove('active'); overlay.style.display = 'none'; };
+  buscador.addEventListener('input', filtrar);
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('filtro')) {
+      document.querySelectorAll('.filtro').forEach(f => f.classList.remove('active'));
+      e.target.classList.add('active');
+      generoActivo = normalizar(e.target.dataset.genero);
+      if (window.innerWidth < 1024) { menu.classList.remove('active'); overlay.style.display = 'none'; }
+      filtrar();
+    }
+  });
+
+  function generarBotonesAnios() {
+    const cont = document.getElementById("filtroAnios");
+    const anios = [...new Set(peliculas.map(p => p.fecha))].sort((a,b) => b-a);
+    cont.innerHTML = '<button class="active">Todos</button>';
+    anios.forEach(anio => {
+      const btn = document.createElement("button");
+      btn.textContent = anio;
+      btn.onclick = () => {
+        cont.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        anioActivo = anio;
+        filtrar();
+      };
+      cont.appendChild(btn);
+    });
+    cont.firstChild.onclick = function() {
+      cont.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      anioActivo = "todos";
+      filtrar();
+    };
+  }
+
+  document.getElementById('anterior').onclick = () => { if(paginaActual > 1) { paginaActual--; mostrarPeliculas(); window.scrollTo(0,0); } };
+  document.getElementById('siguiente').onclick = () => { if(paginaActual < Math.ceil(peliculasFiltradas.length / porPagina)) { paginaActual++; mostrarPeliculas(); window.scrollTo(0,0); } };
+</script>
+</body>
+</html>
