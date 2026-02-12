@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Putin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #96BB54;
+      --bg-dark: #050612;
+      --bg-card: #121430;
+      --text-main: #ffffff;
+      --glass: rgba(255, 255, 255, 0.05);
+      --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Reset y Base Responsiva */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      min-height: 100vh; 
+      padding: 0 0 50px 0; 
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* Header Ajustable */
+    .header-info { 
+      text-align: center; 
+      padding: 20px 5%; 
+      width: 100%; 
+      max-width: 1200px; 
+    }
+    
+    .badge { 
+      display: inline-block; 
+      padding: 4px 12px; 
+      background: var(--glass); 
+      border: 1px solid var(--primary); 
+      color: var(--primary); 
+      border-radius: 6px; 
+      font-size: 0.65rem; 
+      font-weight: 800; 
+      margin-bottom: 8px; 
+      text-transform: uppercase;
+    }
+
+    h4 { 
+      font-size: clamp(1.4rem, 6vw, 2.5rem); 
+      font-weight: 800; 
+      line-height: 1.2;
+      background: linear-gradient(to right, #fff, var(--primary)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
+
+    /* Reproductor */
+    .player-wrapper { 
+      width: 100%; 
+      max-width: 1100px; 
+      background: #000; 
+      position: relative;
+      margin: 10px 0 30px 0;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    
+    @media (min-width: 768px) {
+      .player-wrapper { 
+        border-radius: 15px; 
+        border: 1px solid var(--glass);
+        margin: 20px 0 40px 0;
+      }
+    }
+
+    .responsive-iframe-container { 
+      position: relative; 
+      padding-bottom: 56.25%; 
+      height: 0; 
+      overflow: hidden;
+    }
+    
+    .responsive-iframe-container iframe { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      border: 0; 
+    }
+
+    /* Contenido Relacionado */
+    .relacionadas-container { 
+      width: 92%; 
+      max-width: 1200px; 
+    }
+
+    .seccion-titulo { 
+      font-size: 0.9rem; 
+      font-weight: 700; 
+      color: var(--primary); 
+      margin-bottom: 20px; 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+      text-transform: uppercase; 
+    }
+    
+    .seccion-titulo::after { 
+      content: ""; 
+      flex: 1; 
+      height: 1px; 
+      background: var(--glass); 
+    }
+
+    /* Grid: 3 columnas en móvil | 6 en PC */
+    .grid-relacionadas { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 10px; 
+    }
+
+    @media (min-width: 900px) {
+      .grid-relacionadas { grid-template-columns: repeat(6, 1fr); gap: 20px; }
+    }
+
+    .card-mini { 
+      background: var(--bg-card); 
+      border-radius: 8px; 
+      overflow: hidden; 
+      text-decoration: none; 
+      transition: var(--transition); 
+      border: 1px solid var(--glass); 
+      position: relative;
+      display: block;
+    }
+    
+    .card-mini:hover { 
+      transform: translateY(-5px); 
+      border-color: var(--primary); 
+    }
+
+    .card-mini img { 
+      width: 100%; 
+      aspect-ratio: 2/3; 
+      object-fit: cover; 
+      display: block; 
+    }
+    
+    .info-mini { 
+      padding: 8px 5px; 
+      background: linear-gradient(transparent, rgba(0,0,0,0.9) 80%); 
+      position: absolute; 
+      bottom: 0; 
+      width: 100%; 
+    }
+    
+    .card-mini h5 { 
+      color: #fff; 
+      font-size: 0.65rem; 
+      text-align: center; 
+      white-space: nowrap; 
+      overflow: hidden; 
+      text-overflow: ellipsis; 
+    }
+
+    @media (min-width: 768px) {
+      .card-mini h5 { font-size: 0.8rem; }
+      .info-mini { padding: 15px 10px 10px; }
+    }
+
+    .footer-nav { margin: 40px 0; padding: 0 5%; width: 100%; text-align: center; }
+    
+    .boton-volver { 
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none; 
+      color: #000; 
+      background: var(--primary); 
+      padding: 12px 25px; 
+      border-radius: 50px; 
+      font-weight: 800; 
+      font-size: 0.8rem; 
+      transition: var(--transition); 
+    }
+    
+    .boton-volver:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(150, 187, 84, 0.3); }
+
+    @media (max-width: 480px) {
+      .boton-volver { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header-info">
+    <span class="badge">Streaming HD</span>
+    <h4 id="main-title">Putin</h4>
+  </header>
+
+  <div class="player-wrapper">
+    <div class="responsive-iframe-container">
+    <IFRAME SRC="https://fastream.to/embed-y75x6r836imv.html" FRAMEBORDER=0 allowfullscreen></IFRAME>
+    </div>
+  </div>
+
+  <div class="relacionadas-container">
+    <div class="seccion-titulo" id="titulo-relacionadas">Recomendados para ti</div>
+    <div class="grid-relacionadas" id="relacionadas-box"></div>
+  </div>
+
+  <div class="footer-nav">
+    <a href="../index.html" class="boton-volver">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      VOLVER AL CATÁLOGO
+    </a>
+  </div>
+
+  <script>
+    const PELI_ACTUAL_GENEROS = ["crimen", "suspenso"]; 
+    const PELI_ACTUAL_TITULO = "Putin"; 
+
+    async function inicializarRelacionadas() {
+      const contenedor = document.getElementById('relacionadas-box');
+      
+      try {
+        const rutasJson = ["../peliculas.json", "../series.json", "../animes.json"];
+        const peticiones = rutasJson.map(ruta => fetch(ruta).then(res => res.ok ? res.json() : []).catch(() => []));
+        const resultados = await Promise.all(peticiones);
+        const baseDatos = resultados.flat();
+
+        let similares = baseDatos.filter(item => {
+          let generosItem = [];
+          if (Array.isArray(item.genero)) {
+            generosItem = item.genero.map(g => g.toLowerCase().trim());
+          } else if (item.genero) {
+            generosItem = item.genero.toLowerCase().split(',').map(g => g.trim());
+          }
+          const coincide = PELI_ACTUAL_GENEROS.some(g => generosItem.includes(g.toLowerCase().trim()));
+          return coincide && item.titulo !== PELI_ACTUAL_TITULO;
+        });
+
+        if (similares.length < 12) {
+          const extras = baseDatos.filter(item => item.titulo !== PELI_ACTUAL_TITULO && !similares.includes(item));
+          similares = [...similares, ...extras];
+        }
+
+        similares.sort(() => 0.5 - Math.random());
+
+        // LÓGICA DE CANTIDAD: 6 en móvil (<600px), 12 en el resto
+        const cantidadAMostrar = window.innerWidth < 600 ? 6 : 12; 
+        
+        const seleccion = similares.slice(0, cantidadAMostrar);
+
+        contenedor.innerHTML = "";
+        seleccion.forEach(p => {
+          const card = document.createElement('a');
+          card.className = 'card-mini';
+          let linkFinal = p.url;
+          if (!p.url.startsWith("http") && !p.url.startsWith("../")) { linkFinal = "../" + p.url; }
+          card.href = linkFinal;
+          card.innerHTML = `
+            <img src="${p.imagen}" alt="${p.titulo}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x300?text=CineStream'">
+            <div class="info-mini"><h5>${p.titulo}</h5></div>`;
+          contenedor.appendChild(card);
+        });
+      } catch (e) { console.error("Error cargando relacionadas:", e); }
+    }
+    
+    // Escucha el cambio de tamaño para ajustar la cantidad en tiempo real
+    let timeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(inicializarRelacionadas, 200);
+    });
+
+    window.addEventListener('DOMContentLoaded', inicializarRelacionadas);
+  </script>
+</body>
+</html>
