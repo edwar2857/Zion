@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Coco</title>
+  
+  <!-- HTML -->
+  
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h4>Coco</h4>
+   <div class="responsive-iframe-container">
+<IFRAME id="videoFrame" SRC="https://fastream.to/embed-9bh5j0fuojjs.html" FRAMEBORDER=0 allowfullscreen></IFRAME> 
+</div>
+  <!-- Botones para cambiar el iframe -->
+  <div class="contenedor">
+    <button class="boton" onclick="cambiarIframe('https://fastream.to/embed-9bh5j0fuojjs.html')">latino</button>
+    <button class="boton" onclick="cambiarIframe('https://fastream.to/embed-b0foijy6baw6.html')">español</button>
+  </div>
+<div class="contenedor">
+  <a href="../index.html" class="boton">Películas</a>
+</div>
+<script>
+    function cambiarIframe(url) {
+      document.getElementById("videoFrame").src = url;
+    }
+  </script>
+  <!-- Project -->
+  <script src="main.js"></script>
+</body>
+</html>
